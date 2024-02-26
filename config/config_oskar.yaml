@@ -1,0 +1,5 @@
+paths:
+  gams: C:\GAMS\45\
+  shared_input: /home/oskar/shared_input/
+  abs_shared_code: ../resources/4_model_code_shared
+  results: /home/oskar/Desktop/uio/highRES_GitHub/highRES-Europe-WF/results

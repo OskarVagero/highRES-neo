@@ -1,0 +1,5 @@
+paths:
+  gams: /fp/projects01/ec85/.bin/gams/gams41.5_linux_x64_64_sfx/
+  shared_input: /cluster/work/projects/ec85/shared_input
+  abs_shared_code: /fp/projects01/ec85/models/oskar/NEO/NEO_v2/highRES-model/resources/4_model_code_shared
+  resultsdir: /cluster/work/projects/ec85/NEOv2/

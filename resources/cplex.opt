@@ -1,0 +1,8 @@
+lpmethod 4
+solutiontype 2
+threads 8
+predual -1
+aggind 50
+BarColNZ 150
+barstartalg 3
+BarOrder 3

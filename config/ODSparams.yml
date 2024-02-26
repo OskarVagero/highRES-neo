@@ -1,0 +1,98 @@
+--- # Nontabular data from ODS spreadsheet
+transmission_costs:
+   EUR16 to GBP16: 0.817
+   GBP16 to GBP10: 0.892079207920792
+   discount rate: 0.0715
+   unknown constant: 0.02
+
+transmission:
+   units:
+      loss: per 100 km
+
+transmission_allowed:
+   units:
+      links_cap: N-1 (MW)
+      links_dist: km
+
+gen:
+   units:
+      af: availability factor (%)
+      unit size: MW
+      max ramp: (MW/min)
+      max ramp (%): (%/min)
+      min gen: (%)
+      emis fac: tCO2/MWh
+      cap2area: MW/km2
+      abstract: kl/MWh
+      inertia: s
+      cap2area: MW/km2
+      abstract: kl/MWh
+      startup cost: £k
+      capex2015: £k/MW
+      capex rounding index: 3 # TODO: Rounding index
+      fom: £k/MW
+      varom: £k/MWh
+      fuelcost2010: £k_2010/MWh
+
+store:
+   units:
+      max ramp (%): (%h)
+      max ramp: (MW/min)
+      varom: £k/MWh
+      e capex2010: £k/MWh
+      e capex2050: 8 # TODO: Rounding index
+      p capex2010: £k/MW
+
+gen_2:
+   units:
+      af: availability factor (%)
+      unit size: MW
+      max ramp: (MW/min)
+      max ramp (%): (%/min)
+      min gen: (%)
+      emis fac: tCO2/MWh
+      cap2area: MW/km2
+      abstract: kl/MWh
+      inertia: s
+      startup cost: £k
+      capex2015: £k/MW
+      capex2050: 3
+      fom: £k/MW
+      varom: £k/MWh
+      fuelcost2010: £k_2010/MWh
+
+storage costs:
+   units:
+      PCS: Behnam Ratios
+      power varom: £k/MWh
+
+generator costs:
+  A1: kalsjdljas
+  AJ1: skdlajf
+
+
+
+fuelcosts:
+   units:
+      default unit:  £_{2010}/GJ # The british pound in 2010
+   pounds scaling: 0.001
+   energy scaling (GJ to MWh): 0.277778
+   EU average elc price (euro/MWh):
+      value: 160
+      source: https://ec.europa.eu/energy/sites/ener/files/documents/ref2016_report_final-web.pdf
+
+
+uktm_emis_factors:
+  units:
+    default unit: kt/PJ
+  CommName: Plain English  commodity description ("CommName" column to the right)
+  ELCCO2N: energy-related CO2 (sector-wise accounting system, electricity)
+  Drax Coal: 255.56 # This was used to calculate: (Drax Coal/0.000277778)/1000
+  Drax biomass: 33.9 # This was used to calculate: (Drax biomass/0.000277778)/1000
+  Biomass carbon intensity:
+    unit: ktCO2/PJ
+    value: 90.2
+    note: From UKTM (from DDM)
+  BECSS Cap Eff:
+    value: 0.91
+    note: From UKTM (from DDM). B stands for "Biomass" and CSS stands for "Carbon capture and storage"

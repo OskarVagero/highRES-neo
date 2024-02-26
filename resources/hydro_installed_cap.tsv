@@ -1,0 +1,114 @@
+"Year"	"AreaName"	"MapCode"	"ProductionType"	"AggregatedInstalledCapacity"	"NetGen_entsoe_powerstat"	"TSOs"	"JRC database"	"Geth et al."	"highRES_Europe"														"h"																												
+2015	"Austria"	"AT"	"Hydro Run-of-river and poundage"	"5542.7"	"5,662.00"	"5542.7"			"5542.7"																																										
+2015	"Austria"	"AT"	"Hydro Water Reservoir"	"2964.9"	"7,994.00"	"2964.9"			"2964.9"					"AL"	"AT"	"BA"	"BE"	"BG"	"CH"	"CY"	"CZ"	"DE"	"DK"	"EE"	"ES"	"FI"	"FR"	"UK"	"GR"	"HR"	"HU"	"IE"	"IS"	"IT"	"LI"	"LT"	"LU"	"LV"	"ME"	"MK"	"MT"	"NL"	"NO"	"PL"	"PT"	"RO"	"RS"	"SE"	"SI"	"SK"	"XK"
+2015	"Austria"	"AT"	"Hydro Pumped Storage"	"2971.1"		"2971.1"			"2971.1"			"Hydro Water Reservoir"	"HydroRes"	0	"2964.9"	0	0	1566	"8208.06"	0	650	740	0	0	"18186.5"	1345	"8213.66"	0	2456	1388	28	0	1948	6362	0	0	11	0	0	0	0	0	23572	"156.17"	"1436.2"	3800	0	16184	222	414	0
+2015	"Belgium"	"BE"	"Hydro Run-of-river and poundage"	"114.56"	116				"114.56"			"Hydro Run-of-river and poundage"	"HydroRoR"	0	"5542.7"	0	"114.56"	0	"4645.57"	0	440	4775	9	8	"1085.4"	3264	"10314.1"	"1874.56"	0	421	"28.74"	216	"24.6"	10719	0	128	25	1537	0	0	0	38	7552	"377.84"	2979	2670	0	0	1053	1203	0
+2015	"Belgium"	"BE"	"Hydro Pumped Storage"	1308					1308			"Hydro Pumped Storage"	"PumpedHydro"	0	"2971.1"	0	1308	1399	"1757.69"	0	1175	8410	0	0	"4825.4"	0	4965	2744	693	281	0	292	0	4714	0	900	1291	0	0	0	0	0	1343	"1770.12"	"1245.2"	285	0	426	180	916	0
+2015	"Belgium"	"BE"	"Hydro Water Reservoir"						0																																										
+2015	"Bulgaria"	"BG"	"Hydro Water Reservoir"	1566	190				1566																																										
+2015	"Bulgaria"	"BG"	"Hydro Run-of-river and poundage"		607				0																																										
+2015	"Bulgaria"	"BG"	"Hydro Pumped Storage"	1399	"1,537.00"				1399																																										
+2015	"Croatia"	"HR"	"Hydro Run-of-river and poundage"	421	"439.00"				421																																										
+2015	"Croatia"	"HR"	"Hydro Water Reservoir"	1388	276				1388																																										
+2015	"Croatia"	"HR"	"Hydro Pumped Storage"	281	"1,397.00"				281																																										
+2015	"Cyprus"	"CY"	"Hydro Run-of-river and poundage"		"0.00"				0																																										
+2015	"Cyprus"	"CY"	"Hydro Water Reservoir"		"0.00"				0																																										
+2015	"Cyprus"	"CY"	"Hydro Pumped Storage"		"0.00"				0																																										
+2015	"Czech Republic"	"CZ"	"Hydro Water Reservoir"	650					650																																										
+2015	"Czech Republic"	"CZ"	"Hydro Run-of-river and poundage"	440	"1,081.00"				440																																										
+2015	"Czech Republic"	"CZ"	"Hydro Pumped Storage"	1175					1175																																										
+2015	"Denmark"	"DK"	"Hydro Water Reservoir"						0																																										
+2015	"Denmark"	"DK"	"Hydro Run-of-river and poundage"	9	"7.58"				9																																										
+2015	"Estonia"	"EE"	"Hydro Water Reservoir"	0					0																																										
+2015	"Estonia"	"EE"	"Hydro Run-of-river and poundage"	8	"7.84"				8																																										
+2015	"Estonia"	"EE"	"Hydro Pumped Storage"	0					0																																										
+2015	"Finland"	"FI"	"Hydro Water Reservoir"				1345		1345																																										
+2015	"Finland"	"FI"	"Hydro Run-of-river and poundage"	3264					3264																																										
+2015	"Finland"	"FI"	"Hydro Pumped Storage"		"3,263.00"				0																																										
+2015	"France"	"FR"	"Hydro Run-of-river and poundage"	"10314.1"	"21,008.00"	10314			"10314.1"																																										
+2015	"France"	"FR"	"Hydro Water Reservoir"	"8213.66"	"2,455.00"	8214			"8213.66"																																										
+2015	"France"	"FR"	"Hydro Pumped Storage"	4965		4965			4965																																										
+2015	"Germany"	"DE"	"Hydro Water Reservoir"	740		1531			740																																										
+2015	"Germany"	"DE"	"Hydro Run-of-river and poundage"	4775	"3,811.25"	3944			4775																																										
+2015	"Germany"	"DE"	"Hydro Pumped Storage"	8410	"204.5"	9442			8410																																										
+2015	"United Kingdom"	"UK"	"Hydro Water Reservoir"						0																																										
+2015	"United Kingdom"	"UK"	"Hydro Run-of-river and poundage"		"1,516.22"	"1874.56"			"1874.56"																																										
+2015	"United Kingdom"	"UK"	"Hydro Pumped Storage"		"2,744.00"	"2.744"			"2.744"																																										
+2015	"Greece"	"GR"	"Hydro Water Reservoir"	2456	699				2456																																										
+2015	"Greece"	"GR"	"Hydro Pumped Storage"	693	"2,470.00"				693																																										
+2015	"Greece"	"GR"	"Hydro Run-of-river and poundage"						0																																										
+2015	"Hungary"	"HU"	"Hydro Run-of-river and poundage"	"28.74"	28				"28.74"																																										
+2015	"Hungary"	"HU"	"Hydro Water Reservoir"	28					28																																										
+2015	"Hungary"	"HU"	"Hydro Pumped Storage"		29				0																																										
+2015	"Ireland"	"IE"	"Hydro Run-of-river and poundage"	216					216																																										
+2015	"Ireland"	"IE"	"Hydro Pumped Storage"	292	242				292																																										
+2015	"Ireland"	"IE"	"Hydro Water Reservoir"						0																																										
+2015	"Italy"	"IT"	"Hydro Run-of-river and poundage"	10719	"12,332.00"				10719																																										
+2015	"Italy"	"IT"	"Hydro Water Reservoir"	6362	"3,409.00"				6362																																										
+2015	"Iceland"	"IS"	"Hydro Pumped Storage"						0																																										
+2015	"Iceland"	"IS"	"Hydro Water Reservoir"		"1,948.00"				1948																																										
+2015	"Iceland"	"IS"	"Hydro Run-of-river and poundage"		"24.60"				"24.6"																																										
+2015	"Italy"	"IT"	"Hydro Pumped Storage"	4714	"4,690.00"				4714																																										
+2015	"Latvia"	"LV"	"Hydro Water Reservoir"	0					0																																										
+2015	"Latvia"	"LV"	"Hydro Run-of-river and poundage"	1537	"1,578.00"				1537																																										
+2015	"Lithuania"	"LT"	"Hydro Run-of-river and poundage"	128	126				128																																										
+2015	"Lithuania"	"LT"	"Hydro Water Reservoir"						0																																										
+2015	"Lithuania"	"LT"	"Hydro Pumped Storage"	900					900																																										
+2015	"Luxembourg"	"LU"	"Hydro Water Reservoir"	11					11																																										
+2015	"Luxembourg"	"LU"	"Hydro Run-of-river and poundage"	25	15				25																																										
+2015	"Luxembourg"	"LU"	"Hydro Pumped Storage"	0	17		1291		1291																																										
+2015	"Malta"	"MT"	"Hydro Water Reservoir"			0			0																																										
+2015	"Malta"	"MT"	"Hydro Run-of-river and poundage"			0			0																																										
+2015	"Malta"	"MT"	"Hydro Pumped Storage"			0			0																																										
+2015	"Netherlands"	"NL"	"Hydro Water Reservoir"	0					0																																										
+2015	"Netherlands"	"NL"	"Hydro Pumped Storage"	0					0																																										
+2015	"Netherlands"	"NL"	"Hydro Run-of-river and poundage"	38					38																																										
+2019	"Innlandet"	"NO020"	"Hydro Water Reservoir"						"1004.7"																																										
+2019	"Innlandet"	"NO020"	"Hydro Run-of-river and poundage"						"1418.508"																																										
+2019	"Trøndelag"	"NO060"	"Hydro Water Reservoir"						"894.1"																																										
+2019	"Trøndelag"	"NO060"	"Hydro Run-of-river and poundage"						"1018.2563"																																										
+2019	"Nordland"	"NO071"	"Hydro Water Reservoir"						"3088.7299"																																										
+2019	"Nordland"	"NO071"	"Hydro Run-of-river and poundage"						"870.2057"																																										
+2019	"Troms og Finnmark"	"NO074"	"Hydro Water Reservoir"						579																																										
+2019	"Troms og Finnmark"	"NO074"	"Hydro Run-of-river and poundage"						"429.847"																																										
+2019	"Oslo"	"NO081"	"Hydro Water Reservoir"						0																																										
+2019	"Oslo"	"NO081"	"Hydro Run-of-river and poundage"						"4.7"																																										
+2019	"Viken"	"NO082"	"Hydro Water Reservoir"						"990.5"																																										
+2019	"Viken"	"NO082"	"Hydro Run-of-river and poundage"						"2305.1224"																																										
+2019	"Vestfold og Telemark"	"NO091"	"Hydro Water Reservoir"						"2261.95"																																										
+2019	"Vestfold og Telemark"	"NO091"	"Hydro Run-of-river and poundage"						"414.4202"																																										
+2019	"Agder"	"NO092"	"Hydro Water Reservoir"						"2470.4999"																																										
+2019	"Agder"	"NO092"	"Hydro Run-of-river and poundage"						"1015.193"																																										
+2019	"Rogaland"	"NO0A1"	"Hydro Water Reservoir"						"2843.9"																																										
+2019	"Rogaland"	"NO0A1"	"Hydro Run-of-river and poundage"						"1112.6346"																																										
+2019	"Vestland"	"NO0A2"	"Hydro Water Reservoir"						"4705.94"																																										
+2019	"Vestland"	"NO0A2"	"Hydro Run-of-river and poundage"						"4463.0181"																																										
+2019	"Møre og Romsdal"	"NO0A3"	"Hydro Water Reservoir"						"835.9"																																										
+2019	"Møre og Romsdal"	"NO0A3"	"Hydro Run-of-river and poundage"						"716.7155"																																										
+2015	"Norway"	"NO"	"Hydro Water Reservoir"	"26909.5"		23572			23572																																										
+2015	"Norway"	"NO"	"Hydro Run-of-river and poundage"	"1351.8"		7552			7552																																										
+2015	"Norway"	"NO"	"Hydro Pumped Storage"	0	"31,200.00"	1343			1343																																										
+2015	"Poland"	"PL"	"Hydro Water Reservoir"	"156.17"	378				"156.17"																																										
+2015	"Poland"	"PL"	"Hydro Pumped Storage"	"1770.12"	175				"1770.12"																																										
+2015	"Poland"	"PL"	"Hydro Run-of-river and poundage"	"377.84"	401				"377.84"																																										
+2015	"Portugal"	"PT"	"Hydro Water Reservoir"	"1436.2"	"1,511.00"				"1436.2"																																										
+2015	"Portugal"	"PT"	"Hydro Pumped Storage"	"1245.2"	"1,779.00"				"1245.2"																																										
+2015	"Portugal"	"PT"	"Hydro Run-of-river and poundage"	2979	"2,866.00"				2979																																										
+2015	"Romania"	"RO"	"Hydro Water Reservoir"	3800					3800																																										
+2015	"Romania"	"RO"	"Hydro Pumped Storage"		"3,709.00"			285	285																																										
+2015	"Romania"	"RO"	"Hydro Run-of-river and poundage"	2670	"2,643.00"				2670																																										
+2015	"Slovakia"	"SK"	"Hydro Pumped Storage"	916	"318.16"				916																																										
+2015	"Slovakia"	"SK"	"Hydro Water Reservoir"	414	282				414																																										
+2015	"Slovakia"	"SK"	"Hydro Run-of-river and poundage"	1203	"1,199.00"				1203																																										
+2015	"Slovenia"	"SI"	"Hydro Pumped Storage"	180					180																																										
+2015	"Slovenia"	"SI"	"Hydro Run-of-river and poundage"	1053	"1,053.00"				1053																																										
+2015	"Slovenia"	"SI"	"Hydro Water Reservoir"	0			222		222																																										
+2015	"Spain"	"ES"	"Hydro Water Reservoir"	"18186.5"	"3,073.15"				"18186.5"																																										
+2015	"Spain"	"ES"	"Hydro Run-of-river and poundage"	"1085.4"	"2,714.99"	17035			"1085.4"																																										
+2015	"Spain"	"ES"	"Hydro Pumped Storage"	"4825.4"	"11,230.76"	3329			"4825.4"																																										
+2015	"Sweden"	"SE"	"Hydro Pumped Storage"		"16,184.00"		426		426																																										
+2015	"Sweden"	"SE"	"Hydro Run-of-river and poundage"						0																																										
+2015	"Sweden"	"SE"	"Hydro Water Reservoir"	15956		"16.184"			"16.184"																																										
+2015	"Switzerland"	"CH"	"Hydro Run-of-river and poundage"	190	"3,941.00"	"4645.57"			"4645.57"																																										
+2015	"Switzerland"	"CH"	"Hydro Water Reservoir"	"4791.8"		"8208.06"			"8208.06"																																										
+2015	"Switzerland"	"CH"	"Hydro Pumped Storage"	3940	"7,966.00"	"1757.69"			"1757.69"																																										

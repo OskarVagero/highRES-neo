@@ -1,0 +1,519 @@
+# snakemake --resources mem_mb=700000 --slurm --default-resources \
+# slurm_account=ec85 runtime=4320 mem_mb_per_cpu=21000 cpus_per_task=4 \
+# --use-conda --cluster-cancel scancel --keep-going -j 120
+
+#region:
+# snakemake --resources mem_mb=700000 --slurm --default-resources \
+# slurm_account=ec85 runtime=30 mem_mb_per_cpu=1100 cpus_per_task=4 \
+# --use-conda --cluster-cancel scancel --keep-going -j 120
+
+
+# TODO: Default profile is Fox, HPC, profile
+
+configfile: "config/cluster_system_os_config.yaml"
+
+import itertools
+
+import pandas as pd
+import pathlib
+
+inputyears = [
+    "1995",
+    "2010",
+    #"2011"
+]
+
+# TODO: make grid_regions work
+grid_regions = []
+aggregated_regions = [
+    "NO020", "NO060", "NO071",
+    "NO074", "NO081", "NO082",
+    "NO091", "NO092", "NO0A1",
+    "NO0A2", "NO0A3",
+    "AT", "BE", "BG",
+    "CH", "CZ", "DE",
+    "DK", "EE", "ES",
+    "FI", "FR", "UK",
+    "GR", "HR", "HU",
+    "IE", "IT", "LT",
+    "LU", "LV", "NL",
+    "PL", "PT", "RO",
+    "SE", "SI", "SK",
+]
+
+# TODO: worry about zones vs regions later this only works for all aggregated
+pd.DataFrame(aggregated_regions).rename(columns={0: "zone"}).to_csv(
+    "resources/zones.csv", index=None
+)
+# TODO: maybe at some stage remove the need for this redundant file
+pd.DataFrame(aggregated_regions).assign(
+    Country="",
+    ISO3="",
+    ETM=1,
+    ETM_reg="",
+    EU_simpl="",
+    gb_ext="",
+    UTC="",
+    JRC_EUTIMES="",
+).rename(columns={0: "ISO2"}).loc[
+    :,
+    [
+        "Country",
+        "ISO3",
+        "ISO2",
+        "ETM",
+        "ETM_reg",
+        "EU_simpl",
+        "gb_ext",
+        "UTC",
+        "JRC_EUTIMES",
+    ],
+].to_csv(
+    "resources/europe_countries.csv", index=None
+)
+
+spatials = [
+    # "grid",
+    "region"
+]
+
+cutoff_values = {
+    "solar" : 0.09,
+    "onwind" : 0.15,
+    "offwind" : 0.20
+}
+
+scenarios = pd.DataFrame(inputyears, columns=["years"])
+
+concatlist = []
+for spatial in spatials:
+    concatlist.append(scenarios.assign(spatials=spatial))
+scenarios = pd.concat(concatlist).reset_index(drop=True)
+
+years = scenarios.years.to_list()
+spatials = scenarios.spatials.to_list()
+
+
+# in grams per kWh
+co2target = round(2, 1)
+
+# gamsfilesha256 = "d8e033699604d4474a1c9db59140749509f30383dee532c1e85165617620776b"
+# gamsfilesha256 = "af4a97e52ff41b137a24fb517b03e0e8268d879b01c7aefd7cae3074467ebad1"
+# gamsfilesha256 = "b8ff95b0bc41fa7bd18ff192eac69b54ead25d72a851656c0d9e8fe41ca50177"
+# gamsfilesha256 = "9b1b86c582b18822fcf9c65045f9c68605e951957cd934cc1713f8cf00a5f375"
+# gamsfilesha256 = "7c58219c0ab4320c806c0460ebba547c10838313c6a1f10f6e6640aab90a4838"
+gamsfilesha256 = "9cced6b80dad705f6963e4dee1c48af4b8170d42444bb269b049ea8627d6c0e5"
+
+
+# Absolute path to your GAMS installation
+gamspath = config["paths"]["gams"]
+gamspath = str(gamspath)
+
+# Absolute path to the input data that is the same across all versions
+shared_input_path = pathlib.Path.home()/config["paths"]["shared_input"]
+
+# Relative path the model code that is the same across all versions
+shared_code_path = "resources/4_model_code_shared/"
+abs_shared_code_path = config["paths"]["abs_shared_code"]
+# abs_shared_code_path = workflow.source_path("../resources/4_model_code_shared/")
+# TODO: Get this to work, maybe with Pathlib
+
+# Relative path to the geodata files that differentiate the scenarios
+scenario_exclusions_path = "resources/scenario_exclusions/"
+
+# Relative path to the results
+# TODO: Vetle: --directory, flag for å sette results directory?
+# resultspath = "results/"
+resultspath = pathlib.Path(config["paths"]["resultsdir"])
+pathlib.Path(resultspath).mkdir(parents=True, exist_ok=True)
+
+# Write scenarios to file, so results analysis script can check if they are all
+# available.
+scenarios.to_csv(resultspath / "scenarios.csv", sep="\t")
+
+# Relative path to the built model and built inputs
+yearonlypart = "models/{year}/"
+scenariopart = "{spatial}/"
+modelpathyearonly = resultspath / yearonlypart
+modelpath = modelpathyearonly / scenariopart
+allyearpath = resultspath / "models/allyears/"
+logpath = yearonlypart + scenariopart
+
+localrules:
+    all,
+    build_gams,
+    build_cplex_opt,
+    build_technoeconomic_inputs,
+    ensure_gams_template,
+    rename_demand_file,
+    build_regions_file,
+    build_zones_file,
+    build_hydro_areas,
+    build_weather,
+    build_vre_areas_file,
+    build_vre_file,
+    build_vre_gdx,
+    build_hydro_capfac,
+    build_hydrores_inflow,
+    link_hydrores_inflow,
+    build_vre_parquet,
+    convert_results,
+    gen_sum,
+    build_gams_i2,
+    convert_results_i2,
+
+rule all:
+    input:
+        expand(
+            modelpath / "results_i2.db",
+            #modelpath / "_gen_results.tsv",
+            zip,
+            year=years,
+            spatial=spatials
+        ),
+
+rule ensure_gams_template:
+    input:
+        "resources/highresraw.gms",
+    output:
+        #gamsfile=ensure(resultspath / "highres.gms", sha256=gamsfilesha256),
+        gamsfile=resultspath / "highres.gms",
+    shell:
+        "cp {input} {output}"
+
+
+rule build_gams:
+    input:
+        rules.ensure_gams_template.output.gamsfile,
+    params:
+        co2intensity=co2target,
+        sharedcodepath=abs_shared_code_path,
+    output:
+        modelpath / "highres.gms",
+    script:
+        "scripts/build_gams.py"
+
+
+rule build_cplex_opt:
+    input:
+        "resources/cplex.opt",
+        #ancient("resources/cplex.opt"), # TODO: What does this line do?
+    output:
+        modelpath / "cplex.opt",
+    shell:
+        "cp {input} {output}"
+
+
+rule build_zones_file:
+    input:
+        "resources/zones.csv",
+        "workflow/scripts/build_zones.py",
+    output:
+        modelpath / "zones.dd",
+    script:
+        "scripts/build_zones.py"
+
+
+rule build_technoeconomic_inputs:
+    input:
+        "resources/zones.csv",
+        "resources/gb_ext_scenarios.xls",
+        "resources/highres_gb_ext_database.ods",
+        europecountriescsvlocation = "resources/europe_countries.csv",
+        europedemandcsvlocation = "resources/europe_demand_1950-2021_NEO.csv",
+        data2dd = "workflow/scripts/data2dd_funcs.py",
+    conda:
+        "envs/build_technoeconomic.yml"
+    output:
+        modelpath / "{year}_temporal.dd",
+        modelpath / "BASE_co2_budget.dd",
+        modelpath / "BASE_gen.dd",
+        modelpath / "BASE_store.dd",
+        modelpath / "trans.dd",
+        demandfile=temp(modelpath / "BASE_norescale_demand_{year}.dd"),
+    params:
+        aggregated_regions=aggregated_regions
+    script:
+        "scripts/gb_ext_data2dd.py"
+
+
+rule rename_demand_file:
+    input:
+        rules.build_technoeconomic_inputs.output.demandfile,
+    output:
+        modelpath / "BASE_demand_{year}.dd",
+    shell:
+        "mv {input} {output}"
+
+
+rule build_hydro_areas:
+    input:
+        "resources/zones.csv",
+    output:
+        areashydro=temp(allyearpath / "available_area.txt"),
+    script:
+        "scripts/build_hydro_areas.py"
+
+rule build_weather:
+    input:
+        WDPA1a = shared_input_path / "geodata/onshore/WDPA_Ia_100.tiff",
+        WDPA1b = shared_input_path / "geodata/onshore/WDPA_Ib_100.tiff",
+        WDPA2 = shared_input_path / "geodata/onshore/WDPA_II_100.tiff",
+        WDPA3 = shared_input_path / "geodata/onshore/WDPA_III_100.tiff",
+        WDPA4 = shared_input_path / "geodata/onshore/WDPA_IV_100.tiff",
+        elevation = shared_input_path / "geodata/onshore/2000m.shp.zip",
+        slope = shared_input_path / "geodata/onshore/15degrees.shp.zip",
+        euroshape = shared_input_path / "geodata/onshore/shapes/NUTS_RG_01M_2021_4326.geojson",
+        eurooffshoreshape = shared_input_path
+        / ("geodata/offshore/BOTTOM_MOUNTED_EUROPE_NUTS0" "_NORWAY_NUTS3.geojson"),
+        weatherdata = shared_input_path / "weatherdata/europe_{year}.nc",
+        corine = shared_input_path / "geodata/onshore/corine.tif",
+    output:
+        # FIXME the file indreg is only necessary when we run on grid cell
+        # currently when we run with region, we create an empty file
+        # the cleaner solution might be to outsource the creation of that file
+        # to an extra rule and have an input function conditional on the
+        # wildcard spatial for that rule
+        cf_exclusion_solar=temp(modelpath / "cf_exclusion_solar.tif"),
+        cf_exclusion_windon=temp(modelpath / "cf_exclusion_windon.tif"),
+        cf_exclusion_windoff=temp(modelpath / "cf_exclusion_windoff.tif"),
+        indreg=temp(modelpath / "indices_region.csv"),
+        areassolar=temp(modelpath / "areas_solar.csv"),
+        areaswindonshore=temp(modelpath / "areas_wind_onshore.csv"),
+        areaswindoffshore=temp(modelpath / "areas_wind_offshore.csv"),
+        capfacfile=temp(modelpath / "capacity-factors_solar_{year}.csv"),
+    conda:
+        "envs/build_weather.yml"
+    log:
+        notebook="logs/notebooks/" + logpath + "highRES-build_weather.py.ipynb",
+    resources:
+        mem_mb=50000 # TODO: Find out how much this rule needs,
+        # should be constant (regional/grid)
+    params:
+        sharedinputpath=shared_input_path,
+        aggregated_regions=aggregated_regions,
+        cutoffs=cutoff_values,
+    notebook:
+        "notebooks/highRES-build_weather.py.ipynb"
+
+
+rule build_hydro_capfac:
+    input:
+        disagghydro="resources/Vannkraftverk.csv",
+        eiahydrogen="resources/EIA_hydro_generation_1995_2000_2014.csv",
+        hydroinstalledcap="resources/hydro_installed_cap.tsv",
+        euroshape = shared_input_path / "geodata/onshore/shapes/NUTS_RG_60M_2021_4326.geojson",
+        weatherdata = shared_input_path / "weatherdata/europe_{year}.nc",
+    output:
+        hydrororcapfac=modelpathyearonly / "capacity-factors_hydro_{year}.csv",
+        hydroresinfl=temp(modelpathyearonly / "inflow_hydro-res_{year}.csv"),
+    conda:
+        "envs/build_hydro_capfac.yml"
+    params:
+        sharedinputpath=shared_input_path,
+        aggregated_regions=aggregated_regions
+    notebook:
+        "notebooks/highRES_build_hydro.py.ipynb"
+
+def regionsonlyforgrid(wildcards):
+    returndict = {}
+    if wildcards.spatial == "grid":
+        returndict['indreg'] = rules.build_weather.output.indreg
+    return returndict
+
+rule build_regions_file:
+    input:
+        "workflow/scripts/build_regions.py",
+        unpack(regionsonlyforgrid),
+        zonescsv="resources/zones.csv",
+        #rules.build_weather.output.indreg,
+    output:
+        regionsdd=modelpath / "_regions.dd",
+    script:
+        "scripts/build_regions.py"
+
+#def build_vre_areas_file_func(wildcards):
+#    returndict = {}
+#    if wildcards.neigh != "Extreme":
+#        returndict['areaswindon'] = rules.build_weather.output.areaswindonshore
+#    return returndict
+
+rule build_vre_areas_file:
+    input:
+#        unpack(build_vre_areas_file_func),
+        areashydro=rules.build_hydro_areas.output.areashydro,
+        areassolar=rules.build_weather.output.areassolar,
+        areaswindon=rules.build_weather.output.areaswindonshore,
+        areaswindoff=rules.build_weather.output.areaswindoffshore,
+        vreareaheader="resources/vre_areas_header.txt",
+        genericfooter="resources/generic_footer.txt",
+    output:
+        modelpath / "vre_areas_{year}_.dd",
+    shell:
+        (
+            "cat {input[areashydro]} {input[areassolar]} {input[areaswindon]} "
+            "{input[areaswindoff]} | sort -g | cat {input[vreareaheader]} - "
+            "{input[genericfooter]} > {output[0]}"
+        )
+
+
+rule build_hydrores_inflow:
+    input:
+        rules.build_hydro_capfac.output.hydroresinfl,
+    output:
+        inflowgdx=modelpathyearonly / "hydro_res_inflow_{year}.gdx",
+    shell:
+        gamspath + (
+            "csv2gdx {input} output={output} ID=hydro_inflow "
+            "Index='(1,2,3)' Value='(4)' UseHeader=True StoreZero=True"
+        )
+
+rule link_hydrores_inflow:
+    input:
+        rules.build_hydrores_inflow.output.inflowgdx
+    output:
+        inflowgdx=modelpath / "hydro_res_inflow_{year}.gdx"
+    shell:
+        "ln -sr {input} {output}"
+
+rule build_vre_file:
+    input:
+        cfwsng=rules.build_weather.output.capfacfile,
+        cfhn3=rules.build_hydro_capfac.output.hydrororcapfac,
+    output:
+        vrefile=temp(modelpath / "vre_{year}_.csv"),
+    shell:
+        (
+            "cat {input[cfwsng]} {input[cfhn3]} | sed 's/bottom//'"
+            " > {output[vrefile]}"
+        )
+
+rule build_vre_parquet:
+    input:
+        rules.build_vre_file.output.vrefile
+    output:
+        modelpath / "vre_{year}_.parquet"
+    conda:
+        "envs/build_vre_parquet.yml"
+    script:
+        "scripts/build_vre_parquet.py"
+
+rule build_vre_gdx:
+    input:
+        rules.build_vre_file.output.vrefile
+    output:
+        modelpath / "vre_{year}_.gdx",
+    shell:
+        gamspath + (
+            "csv2gdx {input} output={output} ID=vre_gen Index='(1,2,3)'"
+            " Value='(4)' UseHeader=True StoreZero=True"
+        )
+
+
+rule run_model:
+    input:
+        modelpath / "highres.gms",
+        modelpath / "cplex.opt",
+        shared_code_path + "highres_data_input.gms",
+        shared_code_path + "highres_hydro.gms",
+        shared_code_path + "highres_results.gms",
+        shared_code_path + "highres_storage_setup.gms",
+        shared_code_path + "highres_storage_uc_setup.gms",
+        shared_code_path + "highres_uc_setup.gms",
+        modelpath / "_regions.dd",
+        modelpath / "zones.dd",
+        modelpath / "{year}_temporal.dd",
+        modelpath / "vre_areas_{year}_.dd",
+        modelpath / "BASE_demand_{year}.dd",
+        modelpath / "vre_{year}_.gdx",
+        modelpath / "hydro_res_inflow_{year}.gdx",
+        modelpath / "BASE_co2_budget.dd",
+        modelpath / "BASE_gen.dd",
+        modelpath / "BASE_store.dd",
+        modelpath / "trans.dd",
+        modelpath / "vre_{year}_.parquet"
+    params:
+        gamspath=gamspath,
+        modelpath=str(modelpath),
+    # retries: 3
+    log:
+        str(modelpath) + "/highres.lst",
+        str(modelpath) + "/highres.log",
+    output:
+        modelresults=protected(modelpath / "results.gdx"),
+    script:
+        "scripts/run_gams.sh"
+
+rule convert_results:
+    input:
+        rules.run_model.output.modelresults,
+    output:
+        modelresultsdb=ensure(protected(modelpath / "results.db"), non_empty=True),
+    shell:
+        gamspath + "gdx2sqlite -i {input} -o {output} -fast"
+
+rule gen_sum:
+    input:
+        rules.convert_results.output.modelresultsdb,
+    params:
+        modelpath=str(modelpath)
+    output:
+        gen_results=modelpath / "gen_results.tsv",
+    script:
+        "scripts/gen_sum.py"
+
+rule build_gams_i2:
+    input:
+        modelpath / "highres.gms",
+        rules.gen_sum.output.gen_results
+    params:
+        modelpath=str(modelpath)
+    output:
+        highres_i2=modelpath / "highres_i2.gms",
+    script:
+        "scripts/build_gams_i2.py"
+
+rule run_model_i2:
+    input:
+        modelpath / "results.gdx",
+        #modelpath / "highres.gms",
+        rules.build_gams_i2.output.highres_i2,
+        modelpath / "cplex.opt",
+        shared_code_path + "highres_data_input.gms",
+        shared_code_path + "highres_hydro.gms",
+        shared_code_path + "highres_results.gms",
+        shared_code_path + "highres_storage_setup.gms",
+        shared_code_path + "highres_storage_uc_setup.gms",
+        shared_code_path + "highres_uc_setup.gms",
+        modelpath / "_regions.dd",
+        modelpath / "zones.dd",
+        modelpath / "{year}_temporal.dd",
+        modelpath / "vre_areas_{year}_.dd",
+        modelpath / "BASE_demand_{year}.dd",
+        modelpath / "vre_{year}_.gdx",
+        modelpath / "hydro_res_inflow_{year}.gdx",
+        modelpath / "BASE_co2_budget.dd",
+        modelpath / "BASE_gen.dd",
+        modelpath / "BASE_store.dd",
+        modelpath / "trans.dd",
+        modelpath / "vre_{year}_.parquet"
+    params:
+        gamspath=gamspath,
+        modelpath=str(modelpath),
+    # retries: 3
+    log:
+        str(modelpath) + "/highres_i2.lst",
+        str(modelpath) + "/highres_i2.log",
+    output:
+        modelresults=protected(modelpath / "results_i2.gdx"),
+    script:
+        "scripts/run_gams_i2.sh"
+
+
+rule convert_results_i2:
+    input:
+        rules.run_model_i2.output.modelresults,
+    output:
+        ensure(protected(modelpath / "results_i2.db"), non_empty=True),
+    shell:
+        gamspath + "gdx2sqlite -i {input} -o {output} -fast"
